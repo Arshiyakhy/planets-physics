@@ -9,17 +9,17 @@ def acceleration(pos, other_pos, other_mass):
     return -G * other_mass * r_vec / r_mag**3
 
 
-def step(body, other_pos, other_mass, dt):
+def step_semi_implicit(body, other_pos, other_mass, dt):
     a = acceleration(body.position, other_pos, other_mass)
     body.velocity += a * dt
     body.position += body.velocity * dt
 
 
-def step_symplectic(body, other_pos, other_mass, dt):
+def step_explicit(body, other_pos, other_mass, dt):
     a = acceleration(body.position, other_pos, other_mass)
-    old_velocity = body.velocity.copy()      # save it BEFORE it changes
+    old_velocity = body.velocity.copy()
     body.velocity = body.velocity + a * dt
-    body.position = body.position + old_velocity * dt   # uses the OLD one
+    body.position = body.position + old_velocity * dt
 
 
 def energy(body, other_pos, other_mass, G=4*np.pi**2):

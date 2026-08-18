@@ -1,25 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from src.bodies import Body
-from src.physics import acceleration, step, step_symplectic, energy
+from src.physics import acceleration, step_semi_implicit, step_explicit, energy
+
 
 sun = Body("Sun", mass=1.0, position=[0, 0], velocity=[0, 0])
 dt = 0.05
 steps = 1000
 
-# symplectic Euler
+# semi-implicit (symplectic) Euler
 earth = Body("Earth", mass=3e-6, position=[1.0, 0.0], velocity=[0.0, 2*np.pi])
 symplectic_positions = []
 for i in range(steps):
-    step(earth, sun.position, sun.mass, dt)
+    step_semi_implicit(earth, sun.position, sun.mass, dt)
     symplectic_positions.append(earth.position.copy())
 symplectic_positions = np.array(symplectic_positions)
 
-# forward Euler
+# explicit (forward) Euler
 earth = Body("Earth", mass=3e-6, position=[1.0, 0.0], velocity=[0.0, 2*np.pi])
 forward_positions = []
 for i in range(steps):
-    step_symplectic(earth, sun.position, sun.mass, dt)
+    step_explicit(earth, sun.position, sun.mass, dt)
     forward_positions.append(earth.position.copy())
 forward_positions = np.array(forward_positions)
 
