@@ -1,5 +1,5 @@
 import numpy as np
-
+from src.bodies import Body
 G = 4 * np.pi**2
 
 
@@ -53,3 +53,9 @@ def step_rk4(body, other_pos, other_mass, dt):
 
     body.position = r1 + dt/6 * (k1r + 2*k2r + 2*k3r + k4r)
     body.velocity = v1 + dt/6 * (k1v + 2*k2v + 2*k3v + k4v)
+
+
+def angular_momentum(body):
+    x, y = body.position
+    vx, vy = body.velocity
+    return x * vy - y * vx
