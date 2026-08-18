@@ -13,3 +13,18 @@ def step(body, other_pos, other_mass, dt):
     a = acceleration(body.position, other_pos, other_mass)
     body.velocity += a * dt
     body.position += body.velocity * dt
+
+
+def step_symplectic(body, other_pos, other_mass, dt):
+    a = acceleration(body.position, other_pos, other_mass)
+    old_velocity = body.velocity.copy()      # save it BEFORE it changes
+    body.velocity = body.velocity + a * dt
+    body.position = body.position + old_velocity * dt   # uses the OLD one
+
+
+def energy(body, other_pos, other_mass, G=4*np.pi**2):
+    r = np.linalg.norm(body.position - other_pos)
+    v = np.linalg.norm(body.velocity)
+    kinetic = 0.5 * v**2          # per unit mass of the orbiting body
+    potential = -G * other_mass / r
+    return kinetic + potential
