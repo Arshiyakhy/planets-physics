@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from src.bodies import Body
-from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody
+from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody, total_momentum, total_energy
 
 
 sun = Body("Sun", mass=1.0, position=[0, 0], velocity=[0, 0])
@@ -134,4 +134,41 @@ plt.title("N-body simulation: Sun + Earth + Mars (75 years)")
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.savefig("nbody_orbits.png", dpi=150)
+plt.show()
+
+sun_positions, earth_positions, mars_positions = [], [], []
+system_energy = []
+system_momentum = []
+
+for i in range(nbody_steps):
+    step_semi_implicit_nbody(bodies, dt)
+    sun_positions.append(sun.position.copy())
+    earth_positions.append(earth.position.copy())
+    mars_positions.append(mars.position.copy())
+    system_energy.append(total_energy(bodies))
+    system_momentum.append(np.linalg.norm(total_momentum(bodies)))
+
+sun_positions = np.array(sun_positions)
+earth_positions = np.array(earth_positions)
+mars_positions = np.array(mars_positions)
+
+plt.figure(figsize=(8, 5))
+plt.plot(system_energy)
+plt.axhline(system_energy[0], color='gray',
+            linestyle='--', label="Initial energy")
+plt.xlabel("Step")
+plt.ylabel("Total system energy")
+plt.title("N-body total energy conservation (Sun+Earth+Mars)")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig("nbody_energy.png", dpi=150)
+plt.show()
+
+plt.figure(figsize=(8, 5))
+plt.plot(system_momentum)
+plt.xlabel("Step")
+plt.ylabel("|Total system momentum|")
+plt.title("N-body total momentum conservation (Sun+Earth+Mars)")
+plt.grid(True, alpha=0.3)
+plt.savefig("nbody_momentum.png", dpi=150)
 plt.show()

@@ -75,3 +75,17 @@ def step_semi_implicit_nbody(bodies, dt):
     for body, a in zip(bodies, accelerations):
         body.velocity += a * dt
         body.position += body.velocity * dt
+
+
+def total_energy(bodies):
+    kinetic = sum(0.5 * b.mass * np.linalg.norm(b.velocity)**2 for b in bodies)
+    potential = 0.0
+    for i in range(len(bodies)):
+        for j in range(i + 1, len(bodies)):
+            r = np.linalg.norm(bodies[i].position - bodies[j].position)
+            potential -= G * bodies[i].mass * bodies[j].mass / r
+    return kinetic + potential
+
+
+def total_momentum(bodies):
+    return sum((b.mass * b.velocity for b in bodies), np.zeros(2))
