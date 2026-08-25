@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from src.bodies import Body
-from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum
+from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody
 
 
 sun = Body("Sun", mass=1.0, position=[0, 0], velocity=[0, 0])
@@ -96,4 +96,42 @@ plt.title("Earth's orbit: Symplectic vs Forward Euler vs RK4 (dt=0.025)")
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.savefig("orbit_comparison.png", dpi=150)
+plt.show()
+
+sun = Body("Sun", mass=1.0, position=[0, 0], velocity=[0, 0])
+earth = Body("Earth", mass=3e-6, position=[1.0, 0], velocity=[0, 2*np.pi])
+mars_r = 1.524
+mars_v = np.sqrt(4*np.pi**2 / mars_r)
+mars = Body("Mars", mass=3.2e-7, position=[mars_r, 0], velocity=[0, mars_v])
+
+bodies = [sun, earth, mars]
+
+nbody_steps = 3000
+sun_positions, earth_positions, mars_positions = [], [], []
+
+for i in range(nbody_steps):
+    step_semi_implicit_nbody(bodies, dt)
+    sun_positions.append(sun.position.copy())
+    earth_positions.append(earth.position.copy())
+    mars_positions.append(mars.position.copy())
+
+sun_positions = np.array(sun_positions)
+earth_positions = np.array(earth_positions)
+mars_positions = np.array(mars_positions)
+
+print("Sun final position:", sun.position)
+print("Sun max distance from origin:", np.max(
+    np.linalg.norm(sun_positions, axis=1)))
+plt.figure(figsize=(8, 8))
+plt.plot(earth_positions[:, 0], earth_positions[:, 1],
+         label="Earth", linewidth=1)
+plt.plot(mars_positions[:, 0], mars_positions[:, 1], label="Mars", linewidth=1)
+plt.plot(sun_positions[:, 0], sun_positions[:, 1], label="Sun", linewidth=2)
+plt.gca().set_aspect('equal')
+plt.xlabel("x (AU)")
+plt.ylabel("y (AU)")
+plt.title("N-body simulation: Sun + Earth + Mars (75 years)")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig("nbody_orbits.png", dpi=150)
 plt.show()

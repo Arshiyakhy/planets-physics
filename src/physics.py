@@ -59,3 +59,19 @@ def angular_momentum(body):
     x, y = body.position
     vx, vy = body.velocity
     return x * vy - y * vx
+
+
+def net_acceleration(body, all_bodies):
+    total = np.zeros(2)
+    for other in all_bodies:
+        if other is body:
+            continue
+        total += acceleration(body.position, other.position, other.mass)
+    return total
+
+
+def step_semi_implicit_nbody(bodies, dt):
+    accelerations = [net_acceleration(b, bodies) for b in bodies]
+    for body, a in zip(bodies, accelerations):
+        body.velocity += a * dt
+        body.position += body.velocity * dt
