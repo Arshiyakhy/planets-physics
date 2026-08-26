@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src.bodies import Body
 from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody, total_momentum, total_energy
-
+from astroquery.jplhorizons import Horizons
+from src.horizons import fetch_body
 
 sun = Body("Sun", mass=1.0, position=[0, 0], velocity=[0, 0])
 dt = 0.025
@@ -172,3 +173,33 @@ plt.title("N-body total momentum conservation (Sun+Earth+Mars)")
 plt.grid(True, alpha=0.3)
 plt.savefig("nbody_momentum.png", dpi=150)
 plt.show()
+
+
+obj = Horizons(id='399', location='500@0',
+               epochs={'start': '2026-01-01', 'stop': '2026-01-02', 'step': '1d'})
+vectors = obj.vectors()
+print(vectors)
+print(vectors['x', 'y', 'z', 'vx', 'vy', 'vz'])
+
+sun_real = fetch_body("Sun", "10", 1.0, "2026-01-01", "2026-01-02")
+earth_real = fetch_body("Earth", "399", 3e-6, "2026-01-01", "2026-01-02")
+mars_real = fetch_body("Mars", "499", 3.2e-7, "2026-01-01", "2026-01-02")
+
+print(earth_real.position, earth_real.velocity)
+
+
+sun_real = fetch_body("Sun", "10", 1.0, "2026-01-01", "2026-01-02")
+earth_real = fetch_body("Earth", "399", 3e-6, "2026-01-01", "2026-01-02")
+mars_real = fetch_body("Mars", "499", 3.2e-7, "2026-01-01", "2026-01-02")
+
+real_bodies = [sun_real, earth_real, mars_real]
+sim_steps = 200
+sim_dt = 0.01
+
+for i in range(sim_steps):
+    step_semi_implicit_nbody(real_bodies, sim_dt)
+
+print("Simulated Earth position after 2 years:", earth_real.position)
+earth_actual_2028 = fetch_body(
+    "Earth", "399", 3e-6, "2028-01-01", "2028-01-02")
+print("Real Earth position on 2028-01-01:", earth_actual_2028.position)
