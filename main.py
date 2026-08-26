@@ -203,3 +203,37 @@ print("Simulated Earth position after 2 years:", earth_real.position)
 earth_actual_2028 = fetch_body(
     "Earth", "399", 3e-6, "2028-01-01", "2028-01-02")
 print("Real Earth position on 2028-01-01:", earth_actual_2028.position)
+
+
+# --- Jupiter hypothesis test ---
+jupiter_real = fetch_body("Jupiter", "599", 9.5e-4, "2026-01-01", "2026-01-02")
+
+# Rerun without Jupiter (reset to fresh 2026 state)
+sun_real = fetch_body("Sun", "10", 1.0, "2026-01-01", "2026-01-02")
+earth_real = fetch_body("Earth", "399", 3e-6, "2026-01-01", "2026-01-02")
+mars_real = fetch_body("Mars", "499", 3.2e-7, "2026-01-01", "2026-01-02")
+bodies_no_jupiter = [sun_real, earth_real, mars_real]
+
+for i in range(sim_steps):
+    step_semi_implicit_nbody(bodies_no_jupiter, sim_dt)
+
+# Rerun WITH Jupiter (fresh state again)
+sun_real2 = fetch_body("Sun", "10", 1.0, "2026-01-01", "2026-01-02")
+earth_real2 = fetch_body("Earth", "399", 3e-6, "2026-01-01", "2026-01-02")
+mars_real2 = fetch_body("Mars", "499", 3.2e-7, "2026-01-01", "2026-01-02")
+jupiter_real2 = fetch_body("Jupiter", "599", 9.5e-4,
+                           "2026-01-01", "2026-01-02")
+bodies_with_jupiter = [sun_real2, earth_real2, mars_real2, jupiter_real2]
+
+for i in range(sim_steps):
+    step_semi_implicit_nbody(bodies_with_jupiter, sim_dt)
+
+# Compare both against the real 2028 position
+real_2028 = earth_actual_2028.position  # already fetched above
+
+error_no_jupiter = np.linalg.norm(bodies_no_jupiter[1].position - real_2028)
+error_with_jupiter = np.linalg.norm(
+    bodies_with_jupiter[1].position - real_2028)
+
+print("Error WITHOUT Jupiter:", error_no_jupiter, "AU")
+print("Error WITH Jupiter:   ", error_with_jupiter, "AU")
