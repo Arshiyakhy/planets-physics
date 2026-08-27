@@ -89,3 +89,17 @@ def total_energy(bodies):
 
 def total_momentum(bodies):
     return sum((b.mass * b.velocity for b in bodies), np.zeros(2))
+
+
+def hohmann_transfer(r1, r2, GM=4*np.pi**2):
+    a_transfer = (r1 + r2) / 2
+
+    v_circ1 = np.sqrt(GM / r1)
+    v_transfer1 = np.sqrt(GM * (2/r1 - 1/a_transfer))
+    dv1 = v_transfer1 - v_circ1
+
+    v_transfer2 = np.sqrt(GM * (2/r2 - 1/a_transfer))
+    v_circ2 = np.sqrt(GM / r2)
+    dv2 = v_circ2 - v_transfer2
+
+    return dv1, dv2, dv1 + dv2
