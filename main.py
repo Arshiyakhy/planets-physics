@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from src.bodies import Body
-from src.physics import acceleration, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody, total_momentum, total_energy
+from src.physics import acceleration, hohmann_transfer, step_semi_implicit, step_explicit, energy, step_rk4, angular_momentum, step_semi_implicit_nbody, total_momentum, total_energy
 from astroquery.jplhorizons import Horizons
 from src.horizons import fetch_body
 
@@ -237,3 +237,7 @@ error_with_jupiter = np.linalg.norm(
 
 print("Error WITHOUT Jupiter:", error_no_jupiter, "AU")
 print("Error WITH Jupiter:   ", error_with_jupiter, "AU")
+dv1, dv2, dv_total = hohmann_transfer(1.0, 1.524)
+print(f"Burn 1 (Earth departure): {dv1:.4f} AU/year")
+print(f"Burn 2 (Mars arrival):    {dv2:.4f} AU/year")
+print(f"Total delta-v:            {dv_total:.4f} AU/year")
