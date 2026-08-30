@@ -103,3 +103,8 @@ def hohmann_transfer(r1, r2, GM=4*np.pi**2):
     dv2 = v_circ2 - v_transfer2
 
     return dv1, dv2, dv1 + dv2
+
+
+def apply_burn(body, dv):
+    direction = body.velocity / np.linalg.norm(body.velocity)
+    body.velocity += dv * direction

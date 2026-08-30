@@ -237,6 +237,7 @@ error_with_jupiter = np.linalg.norm(
 
 print("Error WITHOUT Jupiter:", error_no_jupiter, "AU")
 print("Error WITH Jupiter:   ", error_with_jupiter, "AU")
+
 dv1, dv2, dv_total = hohmann_transfer(1.0, 1.524)
 print(f"Burn 1 (Earth departure): {dv1:.4f} AU/year")
 print(f"Burn 2 (Mars arrival):    {dv2:.4f} AU/year")
